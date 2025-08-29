@@ -1,0 +1,27 @@
+#include <iostream>
+using namespace std;
+
+intcountDistinct(intarr[], int n) {
+int count = 0;
+
+for (inti = 0; i< n; i++) {
+boolisDistinct = true;
+for (int j = 0; j <i; j++) {
+if (arr[i] == arr[j]) {
+isDistinct = false;
+break;
+            }
+        }
+if (isDistinct) count++;
+    }
+
+return count;
+}
+
+int main() {
+intarr[] = {1, 2, 5, 2, 1, 7, 5, 9};
+int n = sizeof(arr) / sizeof(arr[0]);
+
+cout<< "Total distinct elements: " <<countDistinct(arr, n) <<endl;
+return 0;
+}
