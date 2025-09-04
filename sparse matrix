@@ -1,0 +1,169 @@
+#include <iostream>
+using namespace std;
+
+#define MAX 100
+
+voidprintSparse(int mat[][3]) {
+int t = mat[0][2]; // number of non-zero elements
+cout<< "Row Col Value\n";
+for (inti = 0; i<= t; i++) {
+cout<< mat[i][0] << "   " << mat[i][1] << "   " << mat[i][2] <<endl;
+    }
+}
+
+
+void transpose(int mat[][3], int trans[][3]) {
+int t = mat[0][2];
+trans[0][0] = mat[0][1];
+trans[0][1] = mat[0][0];
+trans[0][2] = t;
+
+int k = 1;
+for (inti = 0; i< mat[0][1]; i++) { // for each column
+for (int j = 1; j <= t; j++) {
+if (mat[j][1] == i) {
+trans[k][0] = mat[j][1];
+trans[k][1] = mat[j][0];
+trans[k][2] = mat[j][2];
+k++;
+            }
+        }
+    }
+}
+
+
+voidaddSparse(int mat1[][3], int mat2[][3], int res[][3]) {
+    if (mat1[0][0] != mat2[0][0] || mat1[0][1] != mat2[0][1]) {
+cout<< "Addition not possible, dimensions mismatch!\n";
+return;
+    }
+
+int t1 = mat1[0][2], t2 = mat2[0][2];
+inti = 1, j = 1, k = 1;
+
+res[0][0] = mat1[0][0];
+res[0][1] = mat1[0][1];
+
+while (i<= t1 && j <= t2) {
+if (mat1[i][0] < mat2[j][0] || 
+           (mat1[i][0] == mat2[j][0] && mat1[i][1] < mat2[j][1])) {
+res[k][0] = mat1[i][0];
+res[k][1] = mat1[i][1];
+res[k][2] = mat1[i][2];
+i++; k++;
+        }
+else if (mat2[j][0] < mat1[i][0] || 
+                (mat2[j][0] == mat1[i][0] && mat2[j][1] < mat1[i][1])) {
+res[k][0] = mat2[j][0];
+res[k][1] = mat2[j][1];
+res[k][2] = mat2[j][2];
+j++; k++;
+        }
+else { // same position
+res[k][0] = mat1[i][0];
+res[k][1] = mat1[i][1];
+res[k][2] = mat1[i][2] + mat2[j][2];
+i++; j++; k++;
+        }
+    }
+
+while (i<= t1) {
+res[k][0] = mat1[i][0];
+res[k][1] = mat1[i][1];
+res[k][2] = mat1[i][2];
+i++; k++;
+    }
+while (j <= t2) {
+res[k][0] = mat2[j][0];
+res[k][1] = mat2[j][1];
+res[k][2] = mat2[j][2];
+j++; k++;
+    }
+
+res[0][2] = k - 1; // total non-zero count
+}
+
+
+voidmultiplySparse(int mat1[][3], int mat2[][3], int res[][3]) {
+if (mat1[0][1] != mat2[0][0]) {
+cout<< "Multiplication not possible, dimension mismatch!\n";
+return;
+    }
+
+int trans[MAX][3];
+transpose(mat2, trans);
+
+res[0][0] = mat1[0][0];
+res[0][1] = mat2[0][1];
+int k = 1;
+
+for (inti = 1; i<= mat1[0][2]; i++) {
+for (int j = 1; j <= trans[0][2]; j++) {
+if (mat1[i][1] == trans[j][1]) {
+int row = mat1[i][0];
+int col = trans[j][0];
+int value = mat1[i][2] * trans[j][2];
+
+               
+int found = 0;
+for (int x = 1; x < k; x++) {
+if (res[x][0] == row && res[x][1] == col) {
+res[x][2] += value;
+found = 1;
+break;
+                    }
+                }
+if (!found) {
+res[k][0] = row;
+res[k][1] = col;
+res[k][2] = value;
+k++;
+                }
+            }
+        }
+    }
+
+res[0][2] = k - 1; // total non-zero count
+}
+
+int main() {
+    // Example sparse matrices
+int A[MAX][3] = {
+        {3, 3, 3}, // (rows, cols, non-zeros)
+        {0, 0, 5},
+        {1, 1, 8},
+        {2, 2, 3}
+    };
+
+int B[MAX][3] = {
+        {3, 3, 3},
+        {0, 1, 6},
+        {1, 0, 7},
+        {2, 2, 4}
+    };
+
+cout<< "Matrix A (Sparse):\n";
+printSparse(A);
+cout<< "\nMatrix B (Sparse):\n";
+printSparse(B);
+
+
+int T[MAX][3];
+transpose(A, T);
+cout<< "\nTranspose of A:\n";
+printSparse(T);
+
+  
+int SUM[MAX][3];
+addSparse(A, B, SUM);
+cout<< "\nA + B (Sparse):\n";
+printSparse(SUM);
+
+
+int MUL[MAX][3];
+multiplySparse(A, B, MUL);
+cout<< "\nA * B (Sparse):\n";
+printSparse(MUL);
+
+return 0;
+}
