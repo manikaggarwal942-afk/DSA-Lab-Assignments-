@@ -1,0 +1,41 @@
+#include <iostream>
+#include <stack>
+#include <cmath>   // for pow()
+using namespace std;
+
+// Function to evaluate a postfix expression
+int evaluatePostfix(string expr) {
+    stack<int> s;
+
+    for (char ch : expr) {
+        // If operand (digit), push it into stack
+        if (isdigit(ch)) {
+            s.push(ch - '0'); // convert char to int
+        }
+        // If operator, pop two operands and apply operation
+        else {
+            int val2 = s.top(); s.pop();
+            int val1 = s.top(); s.pop();
+
+            switch (ch) {
+                case '+': s.push(val1 + val2); break;
+                case '-': s.push(val1 - val2); break;
+                case '*': s.push(val1 * val2); break;
+                case '/': s.push(val1 / val2); break;
+                case '^': s.push(pow(val1, val2)); break;
+            }
+        }
+    }
+
+    return s.top(); // Final result on top of stack
+}
+
+int main() {
+    string expr;
+    cout << "Enter a postfix expression: ";
+    cin >> expr;
+
+    cout << "Result: " << evaluatePostfix(expr) << endl;
+
+    return 0;
+}
