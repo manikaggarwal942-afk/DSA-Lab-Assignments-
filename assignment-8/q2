@@ -1,0 +1,165 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int val;
+    Node* left;
+    Node* right;
+
+    Node(int x) {
+        val = x;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+// Insert in BST
+Node* insertBST(Node* root, int x) {
+    if (root == nullptr) {
+        return new Node(x);
+    }
+
+    if (x < root->val) {
+        root->left = insertBST(root->left, x);
+    } else {
+        root->right = insertBST(root->right, x);
+    }
+
+    return root;
+}
+
+// (a) Search Recursive
+bool searchBSTRecursive(Node* root, int key) {
+    if (root == nullptr) return false;
+    if (root->val == key) return true;
+    if (key < root->val) return searchBSTRecursive(root->left, key);
+    else return searchBSTRecursive(root->right, key);
+}
+
+// (a) Search Non-Recursive
+bool searchBSTIterative(Node* root, int key) {
+    Node* temp = root;
+    while (temp != nullptr) {
+        if (temp->val == key) return true;
+        if (key < temp->val) temp = temp->left;
+        else temp = temp->right;
+    }
+    return false;
+}
+
+// (b) Maximum element
+Node* maxBST(Node* root) {
+    if (root == nullptr) return nullptr;
+    Node* temp = root;
+    while (temp->right != nullptr) {
+        temp = temp->right;
+    }
+    return temp;
+}
+
+// (c) Minimum element
+Node* minBST(Node* root) {
+    if (root == nullptr) return nullptr;
+    Node* temp = root;
+    while (temp->left != nullptr) {
+        temp = temp->left;
+    }
+    return temp;
+}
+
+// (d) In-order successor
+Node* inorderSuccessor(Node* root, Node* node) {
+    if (node->right != nullptr) {
+        // Successor is the minimum of right subtree
+        return minBST(node->right);
+    }
+
+    Node* succ = nullptr;
+    Node* temp = root;
+    while (temp != nullptr) {
+        if (node->val < temp->val) {
+            succ = temp;
+            temp = temp->left;
+        } else if (node->val > temp->val) {
+            temp = temp->right;
+        } else break;
+    }
+    return succ;
+}
+
+// (e) In-order predecessor
+Node* inorderPredecessor(Node* root, Node* node) {
+    if (node->left != nullptr) {
+        // Predecessor is the maximum of left subtree
+        return maxBST(node->left);
+    }
+
+    Node* pred = nullptr;
+    Node* temp = root;
+    while (temp != nullptr) {
+        if (node->val > temp->val) {
+            pred = temp;
+            temp = temp->right;
+        } else if (node->val < temp->val) {
+            temp = temp->left;
+        } else break;
+    }
+    return pred;
+}
+
+// Simple In-order traversal to verify
+void inorder(Node* root) {
+    if (root == nullptr) return;
+    inorder(root->left);
+    cout << root->val << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = nullptr;
+
+    int n;
+    cout << "Enter number of values for BST: ";
+    cin >> n;
+
+    cout << "Enter values: ";
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        root = insertBST(root, x);
+    }
+
+    cout << "\nIn-order traversal of BST: ";
+    inorder(root);
+    cout << endl;
+
+    int key;
+    cout << "\nEnter key to search: ";
+    cin >> key;
+
+    cout << "Recursive Search: ";
+    if (searchBSTRecursive(root, key)) cout << "Found\n";
+    else cout << "Not Found\n";
+
+    cout << "Iterative Search: ";
+    if (searchBSTIterative(root, key)) cout << "Found\n";
+    else cout << "Not Found\n";
+
+    Node* maxNode = maxBST(root);
+    Node* minNode = minBST(root);
+    cout << "Maximum element: " << (maxNode ? maxNode->val : -1) << endl;
+    cout << "Minimum element: " << (minNode ? minNode->val : -1) << endl;
+
+    Node* node = root; // For demo, choose root as target node
+    cout << "In-order successor of " << node->val << ": ";
+    Node* succ = inorderSuccessor(root, node);
+    if (succ) cout << succ->val << endl;
+    else cout << "None\n";
+
+    cout << "In-order predecessor of " << node->val << ": ";
+    Node* pred = inorderPredecessor(root, node);
+    if (pred) cout << pred->val << endl;
+    else cout << "None\n";
+
+    return 0;
+}
