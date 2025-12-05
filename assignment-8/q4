@@ -1,0 +1,80 @@
+#include <iostream>
+#include <climits> // for INT_MIN, INT_MAX
+using namespace std;
+
+struct Node {
+    int val;
+    Node* left;
+    Node* right;
+
+    Node(int x) {
+        val = x;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+// Insert in BST (for building tree)
+Node* insertBST(Node* root, int x) {
+    if (root == nullptr) {
+        return new Node(x);
+    }
+
+    if (x < root->val) {
+        root->left = insertBST(root->left, x);
+    } else if (x > root->val) {
+        root->right = insertBST(root->right, x);
+    }
+    // duplicates ignored
+    return root;
+}
+
+// Function to check BST using min/max constraints
+bool isBST(Node* root, int minVal, int maxVal) {
+    if (root == nullptr) return true;
+
+    if (root->val <= minVal || root->val >= maxVal) return false;
+
+    return isBST(root->left, minVal, root->val) &&
+           isBST(root->right, root->val, maxVal);
+}
+
+// Wrapper function
+bool checkBST(Node* root) {
+    return isBST(root, INT_MIN, INT_MAX);
+}
+
+// Simple in-order traversal (optional)
+void inorder(Node* root) {
+    if (root == nullptr) return;
+    inorder(root->left);
+    cout << root->val << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = nullptr;
+
+    int n;
+    cout << "Enter number of elements to insert in tree: ";
+    cin >> n;
+
+    cout << "Enter elements:\n";
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        root = insertBST(root, x); // You can also manually build tree
+    }
+
+    cout << "\nIn-order traversal of tree: ";
+    inorder(root);
+    cout << endl;
+
+    if (checkBST(root)) {
+        cout << "The tree is a BST." << endl;
+    } else {
+        cout << "The tree is NOT a BST." << endl;
+    }
+
+    return 0;
+}
