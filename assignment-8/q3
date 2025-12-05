@@ -1,0 +1,129 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int val;
+    Node* left;
+    Node* right;
+
+    Node(int x) {
+        val = x;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+// (a) Insert element in BST (no duplicates)
+Node* insertBST(Node* root, int x) {
+    if (root == nullptr) {
+        return new Node(x);
+    }
+
+    if (x < root->val) {
+        root->left = insertBST(root->left, x);
+    } else if (x > root->val) { // no duplicates
+        root->right = insertBST(root->right, x);
+    }
+
+    return root;
+}
+
+// Helper to find minimum node in subtree
+Node* minNode(Node* root) {
+    Node* temp = root;
+    while (temp && temp->left != nullptr) {
+        temp = temp->left;
+    }
+    return temp;
+}
+
+// (b) Delete element from BST
+Node* deleteBST(Node* root, int key) {
+    if (root == nullptr) return nullptr;
+
+    if (key < root->val) {
+        root->left = deleteBST(root->left, key);
+    } else if (key > root->val) {
+        root->right = deleteBST(root->right, key);
+    } else {
+        // Node found
+        if (root->left == nullptr) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        } else if (root->right == nullptr) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        } else {
+            // Node with two children
+            Node* temp = minNode(root->right); // inorder successor
+            root->val = temp->val;
+            root->right = deleteBST(root->right, temp->val);
+        }
+    }
+    return root;
+}
+
+// (c) Maximum depth (height) of BST
+int maxDepth(Node* root) {
+    if (root == nullptr) return 0;
+    int leftDepth = maxDepth(root->left);
+    int rightDepth = maxDepth(root->right);
+    return 1 + (leftDepth > rightDepth ? leftDepth : rightDepth);
+}
+
+// (d) Minimum depth of BST
+int minDepth(Node* root) {
+    if (root == nullptr) return 0;
+
+    if (root->left == nullptr && root->right == nullptr) return 1;
+
+    if (root->left == nullptr) return 1 + minDepth(root->right);
+    if (root->right == nullptr) return 1 + minDepth(root->left);
+
+    int leftDepth = minDepth(root->left);
+    int rightDepth = minDepth(root->right);
+    return 1 + (leftDepth < rightDepth ? leftDepth : rightDepth);
+}
+
+// Simple in-order traversal
+void inorder(Node* root) {
+    if (root == nullptr) return;
+    inorder(root->left);
+    cout << root->val << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = nullptr;
+
+    int n;
+    cout << "Enter number of elements to insert: ";
+    cin >> n;
+
+    cout << "Enter elements:\n";
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        root = insertBST(root, x);
+    }
+
+    cout << "\nIn-order traversal of BST: ";
+    inorder(root);
+    cout << endl;
+
+    int key;
+    cout << "\nEnter element to delete: ";
+    cin >> key;
+    root = deleteBST(root, key);
+
+    cout << "In-order after deletion: ";
+    inorder(root);
+    cout << endl;
+
+    cout << "Maximum depth of BST: " << maxDepth(root) << endl;
+    cout << "Minimum depth of BST: " << minDepth(root) << endl;
+
+    return 0;
+}
