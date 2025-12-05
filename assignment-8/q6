@@ -1,0 +1,119 @@
+#include <iostream>
+using namespace std;
+
+class PriorityQueue {
+private:
+    int heap[100];  // fixed-size heap array
+    int size;
+
+    // Heapify up for insert
+    void heapifyUp(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (heap[index] > heap[parent]) {
+                swap(heap[index], heap[parent]);
+                index = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    // Heapify down for extract
+    void heapifyDown(int index) {
+        while (2 * index + 1 < size) {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int largest = index;
+
+            if (left < size && heap[left] > heap[largest]) largest = left;
+            if (right < size && heap[right] > heap[largest]) largest = right;
+
+            if (largest != index) {
+                swap(heap[index], heap[largest]);
+                index = largest;
+            } else {
+                break;
+            }
+        }
+    }
+
+public:
+    PriorityQueue() {
+        size = 0;
+    }
+
+    // Insert element
+    void push(int val) {
+        if (size == 100) {
+            cout << "Priority Queue is full\n";
+            return;
+        }
+        heap[size] = val;
+        heapifyUp(size);
+        size++;
+    }
+
+    // Extract max (highest priority)
+    int pop() {
+        if (size == 0) {
+            cout << "Priority Queue is empty\n";
+            return -1;
+        }
+        int top = heap[0];
+        heap[0] = heap[size - 1];
+        size--;
+        heapifyDown(0);
+        return top;
+    }
+
+    // Get max without removing
+    int top() {
+        if (size == 0) {
+            cout << "Priority Queue is empty\n";
+            return -1;
+        }
+        return heap[0];
+    }
+
+    // Check if empty
+    bool empty() {
+        return size == 0;
+    }
+
+    // Print heap (optional)
+    void print() {
+        for (int i = 0; i < size; i++) {
+            cout << heap[i] << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    PriorityQueue pq;
+
+    int n;
+    cout << "Enter number of elements to insert: ";
+    cin >> n;
+
+    cout << "Enter elements:\n";
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        pq.push(x);
+    }
+
+    cout << "\nHeap after insertions: ";
+    pq.print();
+
+    cout << "Top element (max priority): " << pq.top() << endl;
+
+    cout << "Extracting elements:\n";
+    while (!pq.empty()) {
+        cout << pq.pop() << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
