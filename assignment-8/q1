@@ -1,0 +1,95 @@
+/*here we are going to study code for preorder, postorder, inorder
+transversal of binary tree */
+#include<iostream>
+#include<vector>
+using namespace std;
+struct Node
+{
+    int val;
+    Node* left;
+    Node* right;
+    Node(int x) {
+    val =x;
+    left = nullptr;
+    right = nullptr;
+    }
+};
+Node* insertBST(Node* root, int x) {
+    if (root == nullptr) {
+        return new Node(x);
+    }
+
+    if (x < root->val) {
+        root->left = insertBST(root->left, x);
+    } else {
+        root->right = insertBST(root->right, x);
+    }
+
+    return root;
+}
+void preorder (Node* root , vector<int>& out){
+    if (root == nullptr){
+        return;
+    }
+    out.push_back(root->val);
+    preorder(root->left, out);
+    preorder(root->right , out);
+}
+void inorder(Node* root , vector<int> &out){
+    if (root == nullptr){
+        return;
+    }
+    inorder(root->left , out);
+    out.push_back(root->val);
+    inorder(root->right , out);
+}
+void postorder(Node* root , vector<int> &out){
+    if (root == nullptr){
+        return ;
+    }
+    postorder(root->left, out);
+    postorder(root->right, out);
+    out.push_back(root->val);
+}
+
+int main(){
+    // Node* root = new Node(1);
+    // root->left = new Node(2);
+    // root->right = new Node(3);
+    int n;
+    cout<<"Enter the number of values:";
+    cin>>n;
+    Node* root = nullptr;
+    cout<<"enter the values:";
+    for (int i = 0 ; i <n ;i++){
+        int x;
+        cin>>x;
+        root = insertBST(root , x);
+    }
+    vector<int> out;
+    
+    
+    // preorder(root , out);
+    // cout<<"Pre order is :";
+    // for (int i = 0 ; i<out.size(); i++){
+    //     cout<< out[i]<<" ";
+    // }
+    // cout<<endl;
+    
+    
+    // inorder(root, out);
+    // cout<<"inorder is :";
+    // for (int j = 0; j<out.size();j++){
+    //     cout<< out[j]<<" ";
+    // }
+    
+    
+    // postorder(root, out);
+    // cout<<"postorder is :";
+    // for (int j = 0; j<out.size();j++){
+    //     cout<< out[j]<<" ";
+    // }
+
+    cout<<endl;
+    return 0;
+}
