@@ -1,0 +1,74 @@
+#include <iostream>
+using namespace std;
+
+// Function to heapify a subtree rooted at index i
+// n = size of heap
+void heapify(int arr[], int n, int i, bool increasing) {
+    int largestOrSmallest = i; // Initialize largest or smallest as root
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (increasing) {
+        // Max-heap for increasing order
+        if (left < n && arr[left] > arr[largestOrSmallest]) largestOrSmallest = left;
+        if (right < n && arr[right] > arr[largestOrSmallest]) largestOrSmallest = right;
+    } else {
+        // Min-heap for decreasing order
+        if (left < n && arr[left] < arr[largestOrSmallest]) largestOrSmallest = left;
+        if (right < n && arr[right] < arr[largestOrSmallest]) largestOrSmallest = right;
+    }
+
+    if (largestOrSmallest != i) {
+        swap(arr[i], arr[largestOrSmallest]);
+        heapify(arr, n, largestOrSmallest, increasing);
+    }
+}
+
+// Heap Sort function
+void heapSort(int arr[], int n, bool increasing) {
+    // Build heap
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(arr, n, i, increasing);
+    }
+
+    // Extract elements from heap
+    for (int i = n - 1; i >= 0; i--) {
+        swap(arr[0], arr[i]); // Move current root to end
+        heapify(arr, i, 0, increasing); // Heapify reduced heap
+    }
+}
+
+// Print array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    int n;
+    cout << "Enter number of elements: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter elements:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    cout << "\nOriginal Array: ";
+    printArray(arr, n);
+
+    // Increasing order
+    heapSort(arr, n, true);
+    cout << "Sorted Array (Increasing Order): ";
+    printArray(arr, n);
+
+    // Decreasing order
+    heapSort(arr, n, false);
+    cout << "Sorted Array (Decreasing Order): ";
+    printArray(arr, n);
+
+    return 0;
+}
